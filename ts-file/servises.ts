@@ -73,6 +73,7 @@ export const mouse_rightSlow = (
 };
 export const draw_square = (socket: WebSocket, opt1: number, opt2: number) => {
   robot.mouseToggle(mouse.down, mouse.left);
+  robot.mouseToggle(mouse.down, mouse.left);
   mouse_rightSlow(socket, opt1, opt2);
   mouse_downSlow(socket, opt1, opt2);
   mouse_leftSlow(socket, opt1, opt2);
@@ -121,7 +122,8 @@ export const draw_circle = (socket: WebSocket, opt1: number, opt2: number) => {
   const mousePos = robot.getMousePos();
   const trueCentr = { x: mousePos.x - opt1, y: mousePos.y };
   robot.mouseToggle(mouse.down, mouse.left);
-  for (let i = 0; i <= Math.PI * 2; i += 0.01) {
+  robot.mouseToggle(mouse.down, mouse.left);
+  for (let i = 0; i <= Math.PI * 2; i += 0.01 * Math.PI) {
     // Convert polar coordinates to cartesian
     const x = trueCentr.x + radius * Math.cos(i);
     const y = trueCentr.y + radius * Math.sin(i);
@@ -135,6 +137,7 @@ export const draw_rectangle = (
   opt1: number,
   opt2: number
 ) => {
+  robot.mouseToggle(mouse.down, mouse.left);
   robot.mouseToggle(mouse.down, mouse.left);
   mouse_rightSlow(socket, opt2, 0);
   mouse_downSlow(socket, opt1, 0);
