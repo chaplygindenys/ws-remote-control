@@ -4,11 +4,15 @@ import Jimp from 'jimp';
 import { WebSocket } from 'ws';
 import { comandFront } from './config.js';
 import {
+  draw_circle,
+  draw_rectangle,
+  draw_square,
   mouse_down,
   mouse_left,
   mouse_position,
   mouse_right,
   mouse_up,
+  prnt_scrn,
 } from './servises.js';
 
 export const handleSocket = (socket: WebSocket) => {
@@ -16,50 +20,52 @@ export const handleSocket = (socket: WebSocket) => {
     const comandXY = data.toString();
     const ArraycomandXY = comandXY.split(' ');
     const comand: string = ArraycomandXY[0];
-    const x: number = +ArraycomandXY[1] || 0;
-    const y: number = +ArraycomandXY[2] || 0;
+    const opt1: number = +ArraycomandXY[1] || 0;
+    const opt2: number = +ArraycomandXY[2] || 0;
     //получаем данные от сервера
-    console.log(`${comandFront.mouse_position === comand}`);
+    console.log(comand, 'opt1 ', opt1, 'opt2 ', opt2);
     switch (comand) {
       case comandFront.mouse_position:
-        mouse_position(socket, x, y);
+        mouse_position(socket, opt1, opt2);
         break;
       case comandFront.mouse_up:
-        mouse_up(socket, x, y);
+        if (mouse_up(socket, opt1, opt2)) {
+          socket.send(`${comandFront.mouse_up}\0`);
+        }
         break;
       case comandFront.mouse_down:
-        mouse_down(socket, x, y);
+        if (mouse_down(socket, opt1, opt2)) {
+          socket.send(`${comandFront.mouse_down}\0`);
+        }
         break;
       case comandFront.mouse_left:
-        mouse_left(socket, x, y);
+        if (mouse_left(socket, opt1, opt2)) {
+          socket.send(`${comandFront.mouse_left}\0`);
+        }
         break;
       case comandFront.mouse_right:
-        mouse_right(socket, x, y);
+        if (mouse_right(socket, opt1, opt2)) {
+          socket.send(`${comandFront.mouse_right}\0`);
+        }
         break;
-      // case comandFront.draw_square:
-      //   () => {
-      //     const { x: X, y: Y } = robot.getMousePos();
-      //     console.log(XY);
-      //   };
-      //   break;
-      // case comandFront.prnt_scrn:
-      //   () => {
-      //     const { x: X, y: Y } = robot.getMousePos();
-      //     console.log(comandFront.prnt_scrn);
-      //   };
-      //   break;
-      // case comandFront.draw_circle:
-      //   () => {
-      //     const { x: X, y: Y } = robot.getMousePos();
-      //     console.log(XY);
-      //   };
-      //   break;
-      // case comandFront.draw_rectangle:
-      //   () => {
-      //     const { x: X, y: Y } = robot.getMousePos();
-      //     console.log(widtXY);
-      //   };
-      //   break;
+      case comandFront.draw_square:
+        if (draw_square(socket, opt1, opt2)) {
+          socket.send(`${comandFront.draw_square}\0`);
+        }
+        break;
+      case comandFront.prnt_scrn:
+        prnt_scrn(socket, opt1, opt2);
+        break;
+      case comandFront.draw_circle:
+        if (draw_circle(socket, opt1, opt2)) {
+          socket.send(`${comandFront.draw_circle}\0`);
+        }
+        break;
+      case comandFront.draw_rectangle:
+        if (draw_rectangle(socket, opt1, opt2)) {
+          socket.send(`${comandFront.draw_rectangle}\0`);
+        }
+        break;
 
       default:
         break;

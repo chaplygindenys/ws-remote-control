@@ -8,4 +8,6 @@ export enum comandFront {
   draw_circle = 'draw_circle',
   draw_square = 'draw_square',
   draw_rectangle = 'draw_rectangle',
+  prnt_scrn_x = 200,
+  prnt_scrn_y = 200,
 }
