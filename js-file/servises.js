@@ -1,5 +1,4 @@
 import robot from 'robotjs';
-import process from 'process';
 import Jimp from 'jimp';
 import { comandFront } from './config.js';
 var mouse;
@@ -11,7 +10,8 @@ var mouse;
 })(mouse || (mouse = {}));
 export const mouse_position = (socket, opt1, opt2) => {
     const { x: X, y: Y } = robot.getMousePos();
-    socket.send(`${comandFront.mouse_position} ${X},${Y}`, (e) => {
+    const res = `${comandFront.mouse_position} ${X},${Y}\0`;
+    socket.write(res, 'utf-8', (e) => {
         if (e) {
             console.log(e);
         }
@@ -79,8 +79,8 @@ export const prnt_scrn = (socket, opt1, opt2) => {
             if (err) {
                 console.log(err);
             }
-            process.stdout.write(`prnt_scrn ${str.slice(22)}\0`);
-            socket.send(`prnt_scrn ${str.slice(22)}\0`, (e) => {
+            const buf = Buffer.from(str.slice(22));
+            socket.write(`prnt_scrn ${buf}\0`, (e) => {
                 if (e) {
                     console.log(e);
                 }

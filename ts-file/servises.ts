@@ -1,77 +1,60 @@
 import robot, { Bitmap } from 'robotjs';
-import process from 'process';
 import Jimp from 'jimp';
-import { createWebSocketStream, WebSocket } from 'ws';
 import { comandFront } from './config.js';
+import { Duplex } from 'stream';
 enum mouse {
   up = 'up',
   down = 'down',
   right = 'right',
   left = 'left',
 }
-
-export const mouse_position = (
-  socket: WebSocket,
-  opt1: number,
-  opt2: number
-) => {
+export const mouse_position = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   //   отсылка данных
-  socket.send(`${comandFront.mouse_position} ${X},${Y}`, (e) => {
+  const res = `${comandFront.mouse_position} ${X},${Y}\0`;
+  socket.write(res, 'utf-8', (e) => {
     if (e) {
       console.log(e);
     }
   });
 };
-export const mouse_up = (socket: WebSocket, opt1: number, opt2: number) => {
+export const mouse_up = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouse(X, Y - opt1);
   return 'ok';
 };
-export const mouse_upSlow = (socket: WebSocket, opt1: number, opt2: number) => {
+export const mouse_upSlow = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouseSmooth(X, Y - opt1);
 };
-export const mouse_down = (socket: WebSocket, opt1: number, opt2: number) => {
+export const mouse_down = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouse(X, Y + opt1);
   return 'ok';
 };
-export const mouse_downSlow = (
-  socket: WebSocket,
-  opt1: number,
-  opt2: number
-) => {
+export const mouse_downSlow = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouseSmooth(X, Y + opt1);
 };
-export const mouse_left = (socket: WebSocket, opt1: number, opt2: number) => {
+export const mouse_left = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouse(X - opt1, Y);
   return 'ok';
 };
-export const mouse_leftSlow = (
-  socket: WebSocket,
-  opt1: number,
-  opt2: number
-) => {
+export const mouse_leftSlow = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouseSmooth(X - opt1, Y);
 };
-export const mouse_right = (socket: WebSocket, opt1: number, opt2: number) => {
+export const mouse_right = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouse(X + opt1, Y);
   return 'ok';
 };
-export const mouse_rightSlow = (
-  socket: WebSocket,
-  opt1: number,
-  opt2: number
-) => {
+export const mouse_rightSlow = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   robot.moveMouseSmooth(X + opt1, Y);
 };
-export const draw_square = (socket: WebSocket, opt1: number, opt2: number) => {
+export const draw_square = (socket: Duplex, opt1: number, opt2: number) => {
   robot.mouseToggle(mouse.down, mouse.left);
   robot.mouseToggle(mouse.down, mouse.left);
   mouse_rightSlow(socket, opt1, opt2);
@@ -81,7 +64,7 @@ export const draw_square = (socket: WebSocket, opt1: number, opt2: number) => {
   robot.mouseToggle(mouse.up, mouse.left);
   return 'ok';
 };
-export const prnt_scrn = (socket: WebSocket, opt1: number, opt2: number) => {
+export const prnt_scrn = (socket: Duplex, opt1: number, opt2: number) => {
   const { x: X, y: Y } = robot.getMousePos();
   const robotScreenPic: Bitmap = robot.screen.capture(
     X,
@@ -104,8 +87,9 @@ export const prnt_scrn = (socket: WebSocket, opt1: number, opt2: number) => {
       if (err) {
         console.log(err);
       }
-      process.stdout.write(`prnt_scrn ${str.slice(22)}\0`);
-      socket.send(`prnt_scrn ${str.slice(22)}\0`, (e) => {
+      const buf = Buffer.from(str.slice(22));
+
+      socket.write(`prnt_scrn ${buf}\0`, (e) => {
         if (e) {
           console.log(e);
         }
@@ -117,7 +101,7 @@ export const prnt_scrn = (socket: WebSocket, opt1: number, opt2: number) => {
 
   return;
 };
-export const draw_circle = (socket: WebSocket, opt1: number, opt2: number) => {
+export const draw_circle = (socket: Duplex, opt1: number, opt2: number) => {
   const radius = +opt1;
   const mousePos = robot.getMousePos();
   const trueCentr = { x: mousePos.x - opt1, y: mousePos.y };
@@ -132,11 +116,7 @@ export const draw_circle = (socket: WebSocket, opt1: number, opt2: number) => {
   robot.mouseToggle(mouse.up, mouse.left);
   return 'ok';
 };
-export const draw_rectangle = (
-  socket: WebSocket,
-  opt1: number,
-  opt2: number
-) => {
+export const draw_rectangle = (socket: Duplex, opt1: number, opt2: number) => {
   robot.mouseToggle(mouse.down, mouse.left);
   robot.mouseToggle(mouse.down, mouse.left);
   mouse_rightSlow(socket, opt2, 0);
