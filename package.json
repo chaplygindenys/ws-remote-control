@@ -3,23 +3,19 @@
   "version": "0.1.0",
   "description": "Node-ws-remove-control",
   "type": "module",
-  "main": "build/server.js",
+  "main": "js-file/server.js",
   "scripts": {
-    "start:F": "node ./index.js",
-    "start:dev": "tsc -p tsconfig.json && nodemon ./index.js",
     "start": "tsc -p tsconfig.json && node js-file/server.js",
+    "start:dev": "tsc -p tsconfig.json && nodemon js-file/server.js",
+    "start:front": "node ./index.js",
     "lint": "eslint --ext .js,.ts --fix ts-file/",
     "build": "tsc -p tsconfig.json",
-    "devS": "npx nodemon ts-file/server.ts",
-    "devC": "npx nodemon ts-file/client.ts",
-    "fix-ts": "eslint --fix 'project-with-typescript/*.ts'",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "multi": "tsc -p tsconfig.json && node js-file/multi-server.js"
+    "fix-ts": "eslint --fix 'project-with-typescript/*.ts'"
   },
   "author": "Chaplygin Denys",
   "license": "ISC",
   "dependencies": {
-    "@jimp/types": "^0.16.0",
+    "@jimp/types": "^0.16.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "jimp": "^0.16.0",

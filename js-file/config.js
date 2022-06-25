@@ -9,4 +9,6 @@ export var comandFront;
     comandFront["draw_circle"] = "draw_circle";
     comandFront["draw_square"] = "draw_square";
     comandFront["draw_rectangle"] = "draw_rectangle";
+    comandFront[comandFront["prnt_scrn_x"] = 200] = "prnt_scrn_x";
+    comandFront[comandFront["prnt_scrn_y"] = 200] = "prnt_scrn_y";
 })(comandFront || (comandFront = {}));
